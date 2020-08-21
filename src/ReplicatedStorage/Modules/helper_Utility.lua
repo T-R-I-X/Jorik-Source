@@ -1,4 +1,5 @@
-
+-- @@ Utility Module
+-- @@ Has all the utilitys to make my life easier 
 
 local methods = {};
 
@@ -58,7 +59,7 @@ function methods.createDeveloperWarn (self,player,message)
             textLabel[prop] = value
         end
     else
-        self.errorOut(script,"user is not a developer",45)
+        self.errorOut(script,"user is not a developer",45) return
     end
 end
 
