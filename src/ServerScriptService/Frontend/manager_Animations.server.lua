@@ -1,0 +1,1 @@
+repeat wait() until script.Parent.Animate ~= nil
