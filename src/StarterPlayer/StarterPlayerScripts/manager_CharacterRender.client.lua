@@ -71,6 +71,7 @@ addedEvent.OnClientEvent:Connect(addCharacter)
 
 ---------------------- Position ----------------------
 runService:BindToRenderStep("checkCFrame",Enum.RenderPriority.First.Value,checkCFrame)
+runService:BindToRenderStep("checkCharacters",Enum.RenderPriority.First.Value,checkCharacters)
 
 	wait(.5)
 	if db then return end
