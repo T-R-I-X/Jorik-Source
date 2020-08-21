@@ -1,6 +1,14 @@
+
+
 local methods = {};
 
---// Add later for basic utils
+local textLabelProps = {
+    Parent = playerGui,
+    Name = "ErrorDependant",
+    TextColor = Color3.new(255,255,0),
+    BackgroundTransparency = 1,
+    Font = Enum.Font.SourceSansBold
+}
 
 methods.splitNumberFromString = function (splitString)
     local _,res = string.gsub(splitString,"[1-300]")
@@ -31,24 +39,26 @@ methods.errorOut = function (errorScript,message,line)
 end
 
 function methods.createDeveloperWarn (self,player,message)
-    if not player or not player:IsA("Player") or not message then self.errorOut(script,"missing params",36) return end
+    if not player or not player:IsA("Player") or not message then self.errorOut(script,"missing params or player isn't a player",36) return end
 
+    --## if userid not found in the developer table then return
     if developerTable[player.UserId] ~= nil then
         local playerGui = player:WaitForChild("PlayerGui",15)
 
+        --## If not playergui then errorout
         if not playerGui then self.errorOut(script,"missing PlayerGui",36) return end
 
         message = tostring(message)
 
-        local textLabel = {
-            Parent = playerGui,
-            Name = "ErrorDependant",
-            Text = message,
-            TextColor = Color3.new(255,255,0),
-            BackgroundTransparency = 1,
-            Font = Enum.Font.SourceSansBold
-            
-        }
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Text = message
+
+        --## Setting the properties to the text label
+        for prop,value in pairs(textLabelProps) do
+            textLabel[prop] = value
+        end
+    else
+        self.errorOut(script,"user is not a developer",45)
     end
 end
 

@@ -3,8 +3,13 @@
 --// Services
 local playerService = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
-local tweenService = game:GetService("TweenService")
+local replicatedFirst = game:GetService("ReplicatedFirst")
 local runService = game:GetService("RunService")
+
+--// Modules
+local modules = replicatedFirst.holder_Modules
+
+local utils = modules.helper_Utility
 
 --// Objects
 local addedEvent = replicatedStorage:WaitForChild("addedCharacter")
@@ -67,15 +72,13 @@ addedEvent.OnClientEvent:Connect(addCharacter)
 ---------------------- Position ----------------------
 runService:BindToRenderStep("checkCFrame",Enum.RenderPriority.First.Value,checkCFrame)
 
---[[
 	wait(.5)
 	if db then return end
 
-	local character = workspace:WaitForChild(localPlayer.Name,10) or workspace:FindFirstChild(localPlayer.Name)
-	if not character then return end
+	local character = workspace:WaitForChild(localPlayer.Name,10)
+	if not character then return utils.errorOut(script,"missing character",79) end
 
 	local fakeCharacter = character:WaitForChild(localPlayer.UserId,10)
-
 	local CF = character:WaitForChild("ServerValue")
 
 	if CF.Value ~= fakeCharacter.PrimaryPart.CFrame then
@@ -87,4 +90,3 @@ runService:BindToRenderStep("checkCFrame",Enum.RenderPriority.First.Value,checkC
 		db = false
 		return
 	end
-]]
