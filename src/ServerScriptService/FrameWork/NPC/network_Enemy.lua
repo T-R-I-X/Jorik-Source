@@ -1,5 +1,8 @@
 local methods = {}
 
+-- @@ Enemy network aka. the brain
+-- @@ Manages every enemy in game
+
 --// Services
 local playerService = game:GetService("Players")
 local serverStorage = game:GetService("ServerStorage")

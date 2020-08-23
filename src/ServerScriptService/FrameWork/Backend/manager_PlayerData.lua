@@ -1,6 +1,9 @@
 local methods = {}
 local data = {}
 
+-- @@  Playerdata manager
+-- @@  Manages all player data in the game
+
 --// Modules
 local modules = script.Parent.manager_Network
 local utils = modules.helper_Modules

@@ -12,7 +12,6 @@ local moduleFolder = repliactedStorage:WaitForChild("Modules")
 setmetatable(modules, {
     __index = function(t, moduleName)
         if not moduleName then return end
-        if not moduleFolder then return end
 
         --## If modules table has moduleName then return table value
         if modules[moduleName] ~= nil then
