@@ -1,14 +1,14 @@
 -- @@ Serverside rendering
 -- @@ Handles character rendering for the server to the client
 
---// Services
-local playerService = game:GetService("Players")
-local replicatedStorage = game:GetService("ReplicatedStorage")
-local serverScriptService = game:GetService("ServerScriptService")
-
 --// Modules
-local modules = serverScriptService.FrameWork.Backend.holder_modules
+local modules = script.Parent.Parent.Backend.holder_modules
 local utils = modules.helper_Utility
+local network = modules.manager_Network
+
+--// Services
+local playerService = network:GetService("Players")
+local replicatedStorage = network:GetService("ReplicatedStorage")
 
 --// Objects
 local networkFolder = replicatedStorage:WaitForChild("Networks") or utils.errorOut(script,"missing network folder",13)
