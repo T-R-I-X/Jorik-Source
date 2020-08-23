@@ -26,7 +26,6 @@ end
 
 ---------------------- Events ----------------------
 playerService.PlayerAdded:Connect(function (player)
-
 	player.CharacterAdded:Connect(function (character)
 		--## Firing all clients to add an character to render
 		networks[1]:FireAllClients(player,player)
