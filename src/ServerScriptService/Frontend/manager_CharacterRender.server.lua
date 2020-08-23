@@ -1,4 +1,5 @@
---?? Handles events and checks for character rendering on the client ??--
+-- @@ Serverside rendering
+-- @@ Handles character rendering for the server to the client
 
 --// Services
 local playerService = game:GetService("Players")
@@ -18,7 +19,7 @@ local networks = {
 	movedCharacter = Instance.new("RemoteEvent")
 }
 
---## 
+--## Setting properties of the events
 for remoteName,event in pairs(networks) do
     event.Name = remoteName
     event.Parent = networkFolder

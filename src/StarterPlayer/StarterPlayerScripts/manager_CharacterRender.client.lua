@@ -1,4 +1,5 @@
---?? Handles rendering characters on client ??--
+-- @@ Client rendering
+-- @@ Handles rendering on the client to the server
 
 --// Services
 local playerService = game:GetService("Players")
@@ -22,27 +23,29 @@ local db = false
 
 ---------------------- Functions ----------------------
 
---.. renders the player character on client
+--.. Renders the player character on client
 local function addCharacter(player)
-	if not player or not player:IsA("Player") then return end
+	if not player or not player.Character then return end
 
-	local character = player.Character or player.Character:Wait()
-	if not character then return end
+	local character = player.Character
 
-	--## Fake character
-	local fakeCharacter = replicatedStorage.FakeCharacter:Clone()
+	--## Generating the fake character
+	local fakeCharacter = replicatedStorage.Assets.FakeCharacter:Clone()
 	fakeCharacter.Name = player.UserId
 
 	fakeCharacter.Parent = character
 	fakeCharacter:SetPrimaryPartCFrame(character.PrimaryPart.CFrame)
 
-	--## Character
+	--## Setting the HRP and Hitbox transparent on client
 	character.HumanoidRootPart.Transparency = 1
 	character.HitBox.Transparency = 1
 
+	--## Welding the fake character primary to the real characters primary
 	local characterWeld = Instance.new("Weld")
+
 	characterWeld.Part1 = fakeCharacter.PrimaryPart
 	characterWeld.Part0 = character.PrimaryPart
+
 	characterWeld.Parent = character.PrimaryPart
 end
 
@@ -51,6 +54,7 @@ local function checkCharacters()
 	for _,player in pairs(playerService:GetPlayers()) do
 		if not player.Character then return end
 
+		--## If not the fake character then add the character
 		if not player.Character:FindFirstChild(player.UserId) then
 			addCharacter(player.Name)
 		end
@@ -59,29 +63,16 @@ end
 
 --.. checks the real character CFrame
 local function checkCFrame()
-	local character = workspace:WaitForChild(localPlayer.Name,10) or workspace:FindFirstChild(localPlayer.Name)
-	if not character then return end
-
-	local fakeCharacter = character:WaitForChild(localPlayer.UserId,10)
-
-	character.Humanoid:MoveTo(fakeCharacter.HumanoidRootPart.Position)
-end
----------------------- Events ----------------------
-addedEvent.OnClientEvent:Connect(addCharacter)
-
----------------------- Position ----------------------
-runService:BindToRenderStep("checkCFrame",Enum.RenderPriority.First.Value,checkCFrame)
-runService:BindToRenderStep("checkCharacters",Enum.RenderPriority.First.Value,checkCharacters)
-
 	wait(.5)
 	if db then return end
 
-	local character = workspace:WaitForChild(localPlayer.Name,10)
-	if not character then return utils.errorOut(script,"missing character",79) end
+	local character = workspace:WaitForChild(localPlayer.Name,5)
+	local fakeCharacter = character:WaitForChild(localPlayer.UserId,5)
 
-	local fakeCharacter = character:WaitForChild(localPlayer.UserId,10)
+	if not character or not fakeCharacter then return utils.errorOut(script,"missing character(s)",79) end
 	local CF = character:WaitForChild("ServerValue")
 
+	--## If CFValue not equal to fakeCharacter Primary CFrame
 	if CF.Value ~= fakeCharacter.PrimaryPart.CFrame then
 		db = true
 
@@ -91,3 +82,10 @@ runService:BindToRenderStep("checkCharacters",Enum.RenderPriority.First.Value,ch
 		db = false
 		return
 	end
+end
+---------------------- Events ----------------------
+addedEvent.OnClientEvent:Connect(addCharacter)
+
+---------------------- Position ----------------------
+runService:BindToRenderStep("checkCFrame",Enum.RenderPriority.First.Value,checkCFrame)
+runService:BindToRenderStep("checkCharacters",Enum.RenderPriority.First.Value,checkCharacters)
