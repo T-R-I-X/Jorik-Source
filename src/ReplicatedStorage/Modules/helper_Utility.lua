@@ -1,8 +1,16 @@
 -- @@ Utility Module
--- @@ Has all the utilitys to make my life easier 
+-- @@ Has all the utilitys to make my life easier
 
 local methods = {};
+methods.__index = methods
 
+--// Objects
+local assertEvent = assert
+local selectEvent = select
+local unpackEvent = unpack
+local typeEvent = type
+
+--// Values
 local textLabelProps = {
     Parent = playerGui,
     Name = "ErrorDependant",
@@ -11,14 +19,18 @@ local textLabelProps = {
     Font = Enum.Font.SourceSansBold
 }
 
+--------------------------------- Functions ---------------------------------
+
+--.. Splits a number from a string
 methods.splitNumberFromString = function (splitString)
-    local _,res = string.gsub(splitString,"[1-300]")
+    local _,res = string.gsub(splitString,"[1-500]")
 
     if res ~= nil then return res end
 
     return " "
 end
 
+--.. Splits a string from a number
 methods.splitStringFromNumber = function (splitString)
     local _,res = string.gsub(splitString,"[a-Z]")
 
@@ -27,6 +39,7 @@ methods.splitStringFromNumber = function (splitString)
     return 1
 end
 
+--.. "Errors" a script aka. provides a more detailed report
 methods.errorOut = function (errorScript,message,line)
     if not errorScript or not message or not line then return warn("(" .. errorScript:GetFullName() .. ") missing params : line 14") end
 
@@ -39,6 +52,7 @@ methods.errorOut = function (errorScript,message,line)
     return warn(newMessage)
 end
 
+--.. Helps developers by creating the warn on their screen via text label
 function methods.createDeveloperWarn (self,player,message)
     if not player or not player:IsA("Player") or not message then self.errorOut(script,"missing params or player isn't a player",36) return end
 
@@ -61,6 +75,59 @@ function methods.createDeveloperWarn (self,player,message)
     else
         self.errorOut(script,"user is not a developer",45) return
     end
+end
+
+----------------------------- Event utility -----------------------------
+methods.event = {}
+methods.event.__index = methods.event
+
+--.. Creates a new event
+function methods.Event.new()
+	local self = setmetatable({
+		_connections = {};
+		_destroyed = false;
+		_firing = false;
+		_bindable = Instance.new("BindableEvent");
+	}, Event)
+
+	return self
+end
+
+--.. Fires a event
+function methods.Event:Fire(...)
+	self._args = {...}
+	self._numArgs = selectEvent("#", ...)
+	self._bindable:Fire()
+end
+
+--.. "Awaits" an event
+function methods.Event:Wait()
+	self._bindable.Event:Wait()
+	return unpackEvent(self._args, 1, self._numArgs)
+end
+
+--.. Connects a function to an event
+function methods.Event:Connect(func)
+	assertEvent(not self._destroyed, "Cannot connect to destroyed event")
+	assertEvent(typeEvent(func) == "function", "Argument must be function")
+
+    return self._bindable.Event:Connect(function()
+		func(unpackEvent(self._args, 1, self._numArgs))
+	end)
+end
+
+--.. Disconnects all functions from the event
+function methods.Event:DisconnectAll()
+	self._bindable:Destroy()
+	self._bindable = Instance.new("BindableEvent")
+end
+
+--.. Destroys the created event
+function methods.Event:Destroy()
+    if (self._destroyed) then return end
+
+	self._destroyed = true
+	self._bindable:Destroy()
 end
 
 return methods

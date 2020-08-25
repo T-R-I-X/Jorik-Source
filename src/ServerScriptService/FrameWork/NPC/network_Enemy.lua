@@ -38,16 +38,7 @@ methods.new = function()
         defualtMaxDamage = 5,
         defualtMinDamage = 1,
         defualtHitPercent = 0.25,
-        defaultMaxSight = 100,
-        changeDefault = function(self, key, value)
-            if self[key] ~= nil and tonumber(value) then
-                self[key] = value
-
-                return true
-            else
-                return false
-            end
-        end
+        defaultMaxSight = 100
     }
 end
 
