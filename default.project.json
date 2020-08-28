@@ -27,6 +27,11 @@
         "$ignoreUnknownInstances": true,
         "$path": "src/ReplicatedStorage"
       },
+      "ReplicatedFirst": {
+        "$className": "ReplicatedFirst",
+        "$ignoreUnknownInstances": true,
+        "$path": "src/ReplicatedFirst"
+      },
       "ServerScriptService": {
         "$className": "ServerScriptService",
         "$ignoreUnknownInstances": true,

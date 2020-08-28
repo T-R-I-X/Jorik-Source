@@ -125,7 +125,7 @@ function methods:takeDamage(self, enemyName, damage)
 
     local humanoid = character:WaitForChild("Humanoid")
 
-    if (humanoid.Health - damage) <= 0 then
+    if (humanoid.Health - damage) <= 0 then 
         self.destroyEnemy(enemyName)
     else
         humanoid:TakeDamage(damage)

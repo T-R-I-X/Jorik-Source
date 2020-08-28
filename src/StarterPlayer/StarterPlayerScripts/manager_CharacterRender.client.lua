@@ -8,14 +8,15 @@ local replicatedFirst = game:GetService("ReplicatedFirst")
 local runService = game:GetService("RunService")
 
 --// Modules
-local modules = replicatedFirst.holder_Modules
-local utils = modules.helper_Utility
+local modules = replicatedStorage:WaitForChild("Modules")
+local utils = require(modules.helper_Utility)
 
 --// Objects
-local addedEvent = replicatedStorage:WaitForChild("addedCharacter")
-local moveEvent = replicatedStorage:WaitForChild("moveCharacter")
+local addedEvent = replicatedStorage:WaitForChild("Networks").addedPlayer
+local moveEvent = replicatedStorage:WaitForChild("Networks").movedCharacter
 
 local localPlayer = playerService.LocalPlayer
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 
 --// Values
 local db = false
@@ -24,67 +25,45 @@ local db = false
 
 --.. Renders the player character on client
 local function addCharacter(player)
-	if not player or not player.Character then return end
+	local realCharacter = player.Character or player.CharacterAdded:Wait()
+	realCharacter:WaitForChild("HumanoidRootPart")
 
-	local character = player.Character
+	if not realCharacter then utils.errorOut(script,"missing character",27) return end
 
 	--## Generating the fake character
-	local fakeCharacter = replicatedStorage.Assets.FakeCharacter:Clone()
-	fakeCharacter.Name = player.UserId
-
+	local fakeCharacter = replicatedStorage.FakeCharacter:Clone()
+	fakeCharacter.Name = localPlayer.UserId
 	fakeCharacter.Parent = character
-	fakeCharacter:SetPrimaryPartCFrame(character.PrimaryPart.CFrame)
+
+	fakeCharacter:SetPrimaryPartCFrame(realCharacter.PrimaryPart.CFrame)
 
 	--## Setting the HRP and Hitbox transparent on client
-	character.HumanoidRootPart.Transparency = 1
-	character.HitBox.Transparency = 1
+	realCharacter.HumanoidRootPart.Transparency = .5
+	realCharacter.HitBox.Transparency = .5
 
 	--## Welding the fake character primary to the real characters primary
 	local characterWeld = Instance.new("Weld")
 
-	characterWeld.Part1 = fakeCharacter.PrimaryPart
-	characterWeld.Part0 = character.PrimaryPart
+	characterWeld.Part1 = realCharacter.PrimaryPart
+	characterWeld.Part0 = fakeCharacter.UpperTorso
 
-	characterWeld.Parent = character.PrimaryPart
+	characterWeld.Parent = realCharacter.PrimaryPart
 end
 
 --.. checks already added players to see if the fake character is missing
 local function checkCharacters()
 	for _,player in pairs(playerService:GetPlayers()) do
-		if not player.Character then return end
+		if not player.Character then utils.errorOut(script,"missing character",56) return end
 
 		--## If not the fake character then add the character
-		if not player.Character:FindFirstChild(player.UserId) then
-			addCharacter(player.Name)
+		if not player.Character:FindFirstChild(player.UserId) and player.UserId ~= localPlayer.UserId then
+			addCharacter(player)
 		end
 	end
 end
 
---.. checks the real character CFrame
-local function checkCFrame()
-	wait(.5)
-	if db then return end
-
-	local character = workspace:WaitForChild(localPlayer.Name,5)
-	local fakeCharacter = character:WaitForChild(localPlayer.UserId,5)
-
-	if not character or not fakeCharacter then return utils.errorOut(script,"missing character(s)",79) end
-	local CF = character:WaitForChild("ServerValue")
-
-	--## If CFValue not equal to fakeCharacter Primary CFrame
-	if CF.Value ~= fakeCharacter.PrimaryPart.CFrame then
-		db = true
-
-		moveEvent:FireServer(fakeCharacter.PrimaryPart.CFrame)
-
-		wait(1)
-		db = false
-		return
-	end
-end
 ---------------------- Events ----------------------
 addedEvent.OnClientEvent:Connect(addCharacter)
 
 ---------------------- Position ----------------------
-runService:BindToRenderStep("checkCFrame",Enum.RenderPriority.First.Value,checkCFrame)
 runService:BindToRenderStep("checkCharacters",Enum.RenderPriority.First.Value,checkCharacters)

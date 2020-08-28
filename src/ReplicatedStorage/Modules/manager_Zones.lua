@@ -5,13 +5,13 @@ Zone.__index = Zone
 
 --// Services
 local runService = game:GetService("RunService")
-local replicatedFirst = game:GetService("ReplicatedFirst")
-local playerService = game:GetService("Players") 
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local playerService = game:GetService("Players")
 
 --// Modules
-local modules = replicatedFirst.holder_Modules
-local utils = modules.helper_Modules
-local event = utils.Event
+local modules = replicatedStorage:WaitForChild("Modules")
+local utils = require(modules.helper_Utility)
+local event = utils.event
 
 --// Values
 local maxPlayerHeight = 12; -- MAX HEIGH PLAYER CAN BE FROM GROUND TO BE IN A FIELD.
@@ -26,15 +26,15 @@ Zone.Running = false;
 
 --.. Creates a new part table
 function Zone.new(partTable)
-	for i,v in pairs(partTable) do if not v:IsA("BasePart") then utils.errorOut(script,"not all parts are base parts",28) return end end;
+	for i,v in pairs(partTable) do if not v:IsA("Part") then utils.errorOut(script,"not all parts are base parts",29) return end end;
 	    local self = setmetatable({}, Zone)
 
 	    self.PlayerEntered = event.new();
 	    self.PlayerLeft = event.new();
 	    self.Enabled = true;
 	    self.Parts = partTable;
-
-	    --## End this Field instance.
+ 
+	    --## End this Zone instance.
 	    function self:Destroy()
 		    self.Enabled = false;
 		    self.PlayerEntered:Destroy();
@@ -57,12 +57,12 @@ function Zone:Stop()
 	Zone.Running = false;
 end
 
---.. Runs when a user is not in a zone 
+--.. Runs when a user is not in a zone
 local function SetFieldNoneWithEvent(Player)
 	if Zone.LastTouchedLog[Player] ~= "None" then
 		Zone.LastTouchedLog[Player].PlayerLeft:Fire(Player);
     end
-    
+
 	Zone.LastTouchedLog[Player] = "None";
 end
 
@@ -73,23 +73,23 @@ local function CheckPlayer(Player)
 	end
 
 	if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and Player.Character.Humanoid.Health > 0 then
-		local ray = Ray.new(Player.Character.HumanoidRootPart.Position, Vector3.new(0,maxPlayerHeight*-1,0));
+		local ray = Ray.new(Player.Character.HumanoidRootPart.Position, Vector3.new(0,maxPlayerHeight*-5,0));
         local part = workspace:FindPartOnRay(ray, Player.Character, false, true);
-        
+
 		if part then
             local isInField = false;
-            
+
 			for a, f in pairs(Zone.Fields) do
 				if f ~= nil and f.Enabled then
 					if table.find(f.Parts, part) then -- Player is in this field.
                         isInField = true;
-                        
+
 						if Zone.LastTouchedLog[Player] ~= "None" then -- Player came from another field.
 							SetFieldNoneWithEvent(Player);
                         end
-                        
+
 						if Zone.LastTouchedLog[Player] == f then break end;
-                        
+
                         Zone.LastTouchedLog[Player] = f;
 						f.PlayerEntered:Fire(Player);
 					end
@@ -113,8 +113,9 @@ end
 
 local function ConnectDeath(Player, CheckExisting)
 	if CheckExisting then
-		local Humanoid = Player.Character:WaitForChild("Humanoid",10);
-        if not Humanoid then return end
+		local Character = Player.Character or Player.CharacterAdded:Wait()
+		local Humanoid = Character:WaitForChild("Humanoid",10);
+        if (not Humanoid) then return end
 
         Humanoid.Died:Connect(function()
 			PlayerDied(Player);
@@ -122,7 +123,7 @@ local function ConnectDeath(Player, CheckExisting)
 	end
 	Player.CharacterAdded:Connect(function(Character)
 		local Humanoid = Character:WaitForChild("Humanoid",10);
-        if not Humanoid then return end
+        if (not Humanoid) then return end
 
         Humanoid.Died:Connect(function()
 			PlayerDied(Player);
@@ -132,19 +133,19 @@ end
 
 --.. Player died event
 if not Zone.Initialized then
-	if Zone.IsClient then -- Check only the local player for death.
+	if Zone.IsClient then
 		ConnectDeath(playerService.LocalPlayer, true);
-	else 
+	else
 		for i,v in pairs(playerService:GetPlayers()) do
 			v.CharacterAdded:Wait();
 			ConnectDeath(v, true);
         end
-        
-		-- Now when a player joins.
+
+		--## Fires when a player joins
 		playerService.PlayerAdded:Connect(function(Player)
 			ConnectDeath(Player, false);
 		end)
-	end
+	end 
 end
 
 --.. Main loop

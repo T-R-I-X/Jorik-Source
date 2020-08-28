@@ -82,32 +82,34 @@ methods.event = {}
 methods.event.__index = methods.event
 
 --.. Creates a new event
-function methods.Event.new()
+function methods.event.new()
 	local self = setmetatable({
 		_connections = {};
 		_destroyed = false;
 		_firing = false;
 		_bindable = Instance.new("BindableEvent");
-	}, Event)
+	}, methods.event)
 
 	return self
 end
 
 --.. Fires a event
-function methods.Event:Fire(...)
+function methods.event:Fire(...)
 	self._args = {...}
-	self._numArgs = selectEvent("#", ...)
+    self._numArgs = selectEvent("#", ...)
+
 	self._bindable:Fire()
 end
 
 --.. "Awaits" an event
-function methods.Event:Wait()
-	self._bindable.Event:Wait()
+function methods.event:Wait()
+    self._bindable.Event:Wait()
+
 	return unpackEvent(self._args, 1, self._numArgs)
 end
 
 --.. Connects a function to an event
-function methods.Event:Connect(func)
+function methods.event:Connect(func)
 	assertEvent(not self._destroyed, "Cannot connect to destroyed event")
 	assertEvent(typeEvent(func) == "function", "Argument must be function")
 
@@ -117,17 +119,17 @@ function methods.Event:Connect(func)
 end
 
 --.. Disconnects all functions from the event
-function methods.Event:DisconnectAll()
+function methods.event:DisconnectAll()
 	self._bindable:Destroy()
 	self._bindable = Instance.new("BindableEvent")
 end
 
 --.. Destroys the created event
-function methods.Event:Destroy()
+function methods.event:Destroy()
     if (self._destroyed) then return end
 
 	self._destroyed = true
 	self._bindable:Destroy()
 end
 
-return methods
+return methods 

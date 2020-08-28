@@ -12,15 +12,20 @@ function network:GetService(serviceName)
     end
 
     --## Creating a entry in the services table for the serviceName
-    tempService = game:GetService(serviceName)
+    local tempService = game:GetService(serviceName)
     services[serviceName] = tempService
+
+    return tempService
 end
 
 --// Services
-local replicatedStorage =  network:GetService("ReplicatedStorage")
-local serverStorage = network:GetService("ServerStorage")
+local replicatedStorage = network:GetService("ReplicatedStorage")
 
-local instances = {
+--// Modules
+local modules = replicatedStorage:WaitForChild("Modules")
+local utils = require(modules.helper_Utility)
+
+local instances = { 
     Assets=Instance.new("Folder"),
     Networks=Instance.new("Folder")
 }
@@ -37,7 +42,7 @@ end
 function network:CreateNetwork(typeOf,networkName)
     if not typeOf or not networkName then utils.errorOut(script,"missing params",37) return false end
 
-    --## Creating the network
+    --## Creating the network 
     tempInstance = Instance.new(typeOf)
     tempInstance.Name = networkName
     tempInstance.Parent = instances["Networks"]
@@ -50,9 +55,9 @@ function network:Destroy(networkName, typeOf)
     if not networkName then utils.errorOut(script,"missing params",50) return false end
 
     if typeOf then
-        for _,network in pairs(instances["Networks"]:GetChildren()) do
-            if network.Name == networkName and network.ClassName == typeOf then
-                network:Destroy()
+        for _,networker in pairs(instances["Networks"]:GetChildren()) do
+            if networker.Name == networkName and networker.ClassName == typeOf then
+                networker:Destroy()
 
                 return true
             end
@@ -73,7 +78,7 @@ function network:Destroy(networkName, typeOf)
 end
 
 --.. Fires a event network
-netowrk.FireEvent = function(player,eventName, ...)
+network.FireEvent = function(player,eventName, ...)
     local args = {...}
 
     if not player or not eventName or not args then utils.errorOut(script,"missing params",79)  return end
