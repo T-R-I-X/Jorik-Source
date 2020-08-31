@@ -1,86 +1,61 @@
 {
-  "name": "mmmo-rpg",
+  "name": "AeroGameFramework",
   "tree": {
     "$className": "DataModel",
-    "HttpService": {
-      "$className": "HttpService",
-      "$properties": {
-        "HttpEnabled": true
-      }
-    },
-    "Lighting": {
-      "$className": "Lighting",
-      "$properties": {
-        "Brightness": 2,
-        "Technology": "ShadowMap",
-        "GlobalShadows": true,
-        "Ambient": [
-          0,
-          0,
-          0
-        ],
-        "Outlines": false
-      }
-    },
     "ReplicatedStorage": {
-        "$className": "ReplicatedStorage",
-        "$ignoreUnknownInstances": true,
-        "$path": "src/ReplicatedStorage"
-      },
-      "ReplicatedFirst": {
-        "$className": "ReplicatedFirst",
-        "$ignoreUnknownInstances": true,
-        "$path": "src/ReplicatedFirst"
-      },
-      "ServerScriptService": {
-        "$className": "ServerScriptService",
-        "$ignoreUnknownInstances": true,
-        "$path": "src/ServerScriptService"
-      },
-      "StarterGui": {
-        "$className": "StarterGui",
-        "$ignoreUnknownInstances": true,
-        "$path": "src/StarterGui"
-      },
-      "StarterPlayer": {
-        "$className": "StarterPlayer",
-        "StarterCharacterScripts": {
-          "$className": "StarterCharacterScripts",
-          "$ignoreUnknownInstances": true,
-          "$path": "src/StarterPlayer/StarterCharacterScripts"
+      "$className": "ReplicatedStorage",
+      "Aero": {
+        "$className": "Folder",
+        "Shared": {
+          "$path": "src/Shared"
         },
-        "StarterPlayerScripts": {
-          "$className": "StarterPlayerScripts",
-          "$ignoreUnknownInstances": true,
-          "$path": "src/StarterPlayer/StarterPlayerScripts"
-        },
-        "$ignoreUnknownInstances": true
+        "Internal": {
+          "$path": "src/_framework/rep_internal"
+        }
+      }
     },
-    "Workspace": {
-      "$className": "Workspace",
-      "$properties": {
-        "FilteringEnabled": true
-      },
-      "Baseplate": {
-        "$className": "Part",
-        "$properties": {
-          "Color": [
-            0.38823,
-            0.37254,
-            0.38823
-          ],
-          "Locked": true,
-          "Size": [
-            512,
-            20,
-            512
-          ],
-          "Anchored": true,
-          "Position": [
-            0,
-            -10,
-            0
-          ]
+    "ReplicatedFirst": {
+      "$className": "ReplicatedFirst",
+      "Aero": {
+        "$path": "src/_framework/rep_first"
+      }
+    },
+    "ServerStorage": {
+      "$className": "ServerStorage",
+      "Aero": {
+        "$className": "Folder",
+        "Modules": {
+          "$path": "src/Server/Modules"
+        },
+        "Services": {
+          "$path": "src/Server/Services"
+        }
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "Aero": {
+        "$className": "Folder",
+        "Internal": {
+          "$path": "src/_framework/server_internal"
+        }
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "Aero": {
+          "$className": "Folder",
+          "Controllers": {
+            "$path": "src/Client/Controllers"
+          },
+          "Modules": {
+            "$path": "src/Client/Modules"
+          },
+          "Internal": {
+            "$path": "src/_framework/client_internal"
+          }
         }
       }
     }

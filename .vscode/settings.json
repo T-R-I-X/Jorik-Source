@@ -1,6 +1,28 @@
 {
-    "Lua.diagnostics.disable": [
-        "undefined-global",
-        "lowercase-global"
-    ]
+  "files.exclude": {
+    "src/_framework/": true,
+    ".vscode": true
+  },
+  "Lua.diagnostics.globals": [
+    "Enum",
+    "script",
+    "typeof",
+    "Instance",
+    "game",
+    "tick",
+    "Vector3",
+    "Random",
+    "CFrame",
+    "warn",
+    "wait",
+    "spawn",
+    "bit32",
+    "Color3",
+    "UDim2",
+    "Vector2",
+    "TweenInfo",
+    "workspace",
+    "Ray"
+  ],
+  "Lua.runtime.version": "Lua 5.1"
 }
