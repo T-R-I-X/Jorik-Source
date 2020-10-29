@@ -10,7 +10,7 @@ function Client.New(Player)
 end
 
 function Client:FetchData(Request)
-	
+
 end
 
 return Client

@@ -1,14 +1,14 @@
 --- Wraps the datastore object to provide async cached loading and saving
 -- @classmod DataStore
 
-local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
+local engine = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
 
-local DataStoreDeleteToken = require("DataStoreDeleteToken")
-local DataStorePromises = require("DataStorePromises")
-local DataStoreStage = require("DataStoreStage")
-local Maid = require("Maid")
-local Promise = require("Promise")
-local Signal = require("Signal")
+local DataStoreDeleteToken = require(script.Parent.DataStoreDeleteToken)
+local DataStorePromises = require(script.Parent.DataStorePromises)
+local DataStoreStage = require(script.Parent.DataStoreStage)
+local Maid = engine.load("Maid")
+local Promise = engine.load("Promise")
+local Signal = engine.load("Signal")
 
 local DEBUG_WRITING = false
 
