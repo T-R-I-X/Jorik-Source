@@ -13,30 +13,30 @@ local httpService = game:GetService("HttpService")
 -- Modules
 local require = require(replicatedStorage:WaitForChild("Engine"))
 
---- default slot data 
+--- default slot data
 local defaultModelData = {
 	--- currency
 	coins = 0;
 	cartelcoins = 0;
-	
+
 	--- equips
 	weapon = "Tester Sword";
 	shield = "Wooden Shield";
 	armor = "Iron Armor";
 	helmet = "Cloth Helmet";
-	
+
 	--- Abilites
 	Abilities = {
-		
+
 	},
-	
-	--- stats 
+
+	--- stats
 	physical = 1;
 	magic = 1;
 	health = 1;
 	level = 1;
 	exp = 0;
-	
+
 	--- extra
 	vip = 0;
 }
@@ -44,28 +44,28 @@ local defaultModelData = {
 --- setup DataManager
 function DataManager.init()
 	if DataManager._init then return end
-	
+
 	--- requiring all the modules after the module has returned its value
 	DataManager._playerDataManager = require("PlayerDataStoreManager")
 	DataManager._maid = require("Maid").new()
 	DataManager._promise = require("Promise")
-	
+
 	DataManager._dataStoreManager = DataManager._playerDataManager.new(
 		dataStoreService:GetDataStore("PlayerData", "Developer_Version"),
 		function(player)
 			return tostring(player.UserId)
 		end)
-	
+
 	--- setting the _init value so it can't be loaded again
 	DataManager._init = true
 end
 ------------------------- Private functions -------------------------
 local function instance(instanceType,instanceName,instanceParent)
-	local instance = Instance.new(instanceType)
-	
-	instance.Name = instanceName
-	instance.Parent = instanceParent
-	
+	local temp = Instance.new(instanceType)
+
+	temp.Name = instanceName
+	temp.Parent = instanceParent
+
 	return instance
 end
 
@@ -73,42 +73,42 @@ local function GetCurrent(player)
 	return DataManager._promise.new(function(resolve,reject,cancel)
 		--- get the datastore from the manager
 		local dataStore = DataManager._dataStoreManager:GetDataStore(player)
-		
+
 		DataManager._maid:GivePromise(dataStore:Load("currentslot","slot1")
-			
+
 		:Then(function(value)
 			resolve(value)
 		end)
-		
+
 		:Catch(function(...)
 			warn(...)
 			reject(...)
 		end))
-		
+
 	end)
 end
 
 local function LoadStore(player,slotStoreString)
 	local dataFolder = player:FindFirstChild("leaderstats")
-	
+
 	return DataManager._promise.new(function(resolve,reject,cancel)
 		if dataFolder then
 			dataFolder:Destroy()
 		end
-		
+
 		--- get the datastore from the manager | get the substore for the slot being loaded
 		local dataStore = DataManager._dataStoreManager:GetDataStore(player)
 		local slotStore = dataStore:GetSubStore(slotStoreString):GetSubStore("data")
-		
+
 		dataFolder = instance("Folder","leaderstats", player)
-		
+
 		local slotData = instance("StringValue","slot",dataFolder)
-		
+
 		dataStore:Store("currentslot",slotStoreString)
-		
+
 		DataManager._maid:GivePromise(slotStore:Load("data", defaultModelData):Then(function(value) -- if loading was successful then set the value of slot data
 			slotData.Value = httpService:JSONEncode(value)
-			
+
 			resolve(slotData,value)
 			warn("Loaded slot: " .. slotStoreString .. " (" .. player.UserId .. ")")
 		end):Catch(function(...) --- catch any errors with loading the data
@@ -123,11 +123,11 @@ local function DeleteStore(player,slotStoreString)
 		--- get the datastore from the manager | get the substore for the slot being loaded
 		local dataStore = DataManager._dataStoreManager:GetDataStore(player)
 		local slotStore = dataStore:GetSubStore(slotStoreString):GetSubStore("data")
-		
+
 		slotStore:Delete("data")
-		
+
 		slotStore:Store("data",defaultModelData)
-		
+
 		DataManager._maid:GivePromise(LoadStore(player,slotStoreString):Then(function(dataEncoded)
 			warn("Deleted save slot and reloaded: (" .. player.UserId .. ")")
 			resolve(dataEncoded)
@@ -156,16 +156,16 @@ function DataManager:GetKey(player,slotString,keyString)
 		if not DataManager._init then
 			reject("Module hasn't been started yet!")
 		end
-		
+
 		--- giving maid the LoadStore promise to tidy up
 		DataManager._maid:GivePromise(
-			
+
 			LoadStore(player,slotString)
-			
+
 			--- andThen pass through and check the table for the key
-			:andThen(function(dataEncoded,dataDecoded)	
+			:andThen(function(dataEncoded,dataDecoded)
 				local keyData = dataDecoded[keyString]
-				
+
 				--- check the table for the key
 				if keyData ~= nil then
 					resolve(keyData)
@@ -173,13 +173,13 @@ function DataManager:GetKey(player,slotString,keyString)
 					reject("No key data")
 				end
 			end)
-			
+
 			--- catch any errors fetching could've produced
 			:Catch(function(...)
 				warn(...)
-				reject(...)	
+				reject(...)
 			end))
-		
+
 	end)
 end
 
@@ -192,41 +192,41 @@ function DataManager:CompleteNukePlayer(player)
 		if not DataManager._init then
 			reject("Module hasn't been started yet!")
 		end
-		
+
 		local currentSlot
-		
+
 		--- giving maid the promise for cleanup
 		DataManager._maid:GivePromise(
-			
+
 			GetCurrent(player)
-			
+
 			--- andThen set the currentSlot value to slot
-			:andThen(function(value)	
+			:andThen(function(value)
 				currentSlot = value
 			end)
-			
+
 			--- catch any errors that the promise might throw
 			:Catch(function(...)
 				warn(...)
 				reject(...)
 			end))
-		
+
 		--- giving the promise to maid for tidy up
 		DataManager._maid:GivePromise(
-			
+
 			DeleteStore(player,currentSlot)
-			
+
 			--- and then resolve the promise
-			:andThen(function()	
+			:andThen(function()
 				resolve(true)
 			end)
-			
+
 			--- catch any errors the fetching might produce
 			:Catch(function(...)
 				warn(...)
 				reject(...)
 			end))
-		
+
 	end)
 end
 
@@ -241,53 +241,53 @@ function DataManager:ChangeKey(player,key,value)
 		if not DataManager._init then
 			reject("Module hasn't been started yet!")
 		end
-		
+
 		local slotStoreString
-		
+
 		--- giving maid the GetCurrent promise to tidy up
 		DataManager._maid:GivePromise(
-			
+
 			GetCurrent(player)
-			
+
 			--- andThen set the slot store string
 			:andThen(function(value)
 				slotStoreString = value
 			end)
-			
+
 			--- catch any errors fetching could've had
 			:Catch(function(...)
 				warn(...)
-				reject(...)	
+				reject(...)
 			end))
-		
+
 		--- get the datastore from the manager | get the substore for the slot being loaded
 		local dataStore = DataManager._dataStoreManager:GetDataStore(player)
 		local slotStore = dataStore:GetSubStore(slotStoreString):GetSubStore("data")
 
 		local dataTable
-		
+
 		--- giving maid the LoadStore promise to tidy up
 		DataManager._maid:GivePromise(
-			
+
 			LoadStore(player,slotStoreString)
-			
+
 			--- then if fetching was successful set the dataTable value
 			:Then(function(dataEncoded,dataDecoded)
-				dataTable = dataDecoded	
+				dataTable = dataDecoded
 			end)
-			
+
 			--- catch any errors data fetching might've had
 			:Catch(function(...)
 				warn(...)
-				reject(...)	
+				reject(...)
 			end))
-		
+
 		--- setting the key value
 		dataTable[key] = value
-		
+
 		--- storing the new value inside the store
 		slotStore:Store(dataTable)
-		
+
 		--- resolving the promise
 		resolve(dataTable)
 	end)
@@ -310,38 +310,38 @@ function DataManager:NukeAllPlayers()
 		if not DataManager._init then
 			reject("Module hasn't been started yet!")
 		end
-		
+
 		--- looping through the players to delete all the stores
-		for _,player in ipairs(players:GetPlayers()) do	
+		for _,player in ipairs(players:GetPlayers()) do
 			if player.ClassName == "player" then
 				local slotStoreString = nil
-				
+
 				--- giving the get current slot promise to maid to tidy up
 				DataManager._maid:GivePromise(
-					
+
 					DataManager:GetCurrentSlot(player)
-					
-					--- then if the fetching was successful 
+
+					--- then if the fetching was successful
 					:Then(function(value)
-						slotStoreString = value	
+						slotStoreString = value
 					end)
-					
+
 					--- catch the fetch error
 					:Catch(function(...)
 						warn(...)
-						reject(...)	
+						reject(...)
 					end))
-				
+
 				--- giving the delete store promise to maid to tidy up
 				DataManager._maid:GivePromise(
-					
+
 					DeleteStore(player,slotStoreString)
-					
+
 					--- then if deleting the store was successful log that their data was deleted
 					:Then(function(decodedData)
 						warn("Deleted: " .. player.Name .. " data")
 					end)
-					
+
 					--- catch the promise error if it throws one
 					:Catch(function(...)
 						warn(...)
@@ -349,7 +349,7 @@ function DataManager:NukeAllPlayers()
 				end))
 			end
 		end
-		
+
 		--- resolving the promise
 		resolve(true)
 	end)
@@ -357,7 +357,7 @@ end
 
 function DataManager.DisableSaveOnStudio()
 	if not DataManager._init then return end
-	
+
 	--- disabling the save on close will midgate the freeze when you stop the game test
 	DataManager._dataStoreManager:DisableSaveOnCloseStudio()
 end

@@ -21,7 +21,7 @@ struct = "Event"
 
 [selene.structs.BasePart.BackParamA]
 property = true
-writable = "overridden"
+writable = "overridden" 
 
 [selene.structs.BasePart.BackParamB]
 property = true
