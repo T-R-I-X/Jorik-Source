@@ -7,30 +7,15 @@
       "$ignoreUnknownInstances": true,
       "$path": "src/Chat"
     },
-    "Workspace": {
-      "$className": "Workspace",
-      "$ignoreUnknownInstances": true,
-      "$path": "src/Workspace"
-    },
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "$ignoreUnknownInstances": true,
       "$path": "src/ReplicatedStorage"
     },
-    "ReplicatedFirst": {
-      "$className": "ReplicatedFirst",
-      "$ignoreUnknownInstances": true, 
-      "$path": "src/ReplicatedFirst"
-    },
     "ServerScriptService": {
       "$className": "ServerScriptService",
-      "$ignoreUnknownInstances": true,
+      "$ignoreUnknownInstances": false,
       "$path": "src/ServerScriptService"
-    },
-    "StarterGui": {
-      "$className": "StarterGui", 
-      "$ignoreUnknownInstances": true,
-      "$path": "src/StarterGui" 
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",
@@ -41,7 +26,7 @@
       },
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
-        "$ignoreUnknownInstances": true,
+        "$ignoreUnknownInstances": false,
         "$path": "src/StarterPlayer/StarterPlayerScripts"
       },
       "$ignoreUnknownInstances": true
