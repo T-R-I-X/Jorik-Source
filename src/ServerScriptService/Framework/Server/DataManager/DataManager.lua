@@ -48,7 +48,6 @@ function DataManager.init()
 	--- requiring all the modules after the module has returned its value
 	DataManager._playerDataManager = require("PlayerDataStoreManager")
 	DataManager._maid = require("Maid").new()
-	DataManager._promise = require("Promise")
 
 	DataManager._dataStoreManager = DataManager._playerDataManager.new(
 		dataStoreService:GetDataStore("PlayerData", "Developer_Version"),
@@ -70,22 +69,10 @@ local function instance(instanceType,instanceName,instanceParent)
 end
 
 local function GetCurrent(player)
-	return DataManager._promise.new(function(resolve,reject,cancel)
-		--- get the datastore from the manager
-		local dataStore = DataManager._dataStoreManager:GetDataStore(player)
+	--- get the datastore from the manager
+	local dataStore = DataManager._dataStoreManager:GetDataStore(player)
 
-		DataManager._maid:GivePromise(dataStore:Load("currentslot","slot1")
-
-		:Then(function(value)
-			resolve(value)
-		end)
-
-		:Catch(function(...)
-			warn(...)
-			reject(...)
-		end))
-
-	end)
+	return dataStore:Load("currentslot","slot1")
 end
 
 local function LoadStore(player,slotStoreString)

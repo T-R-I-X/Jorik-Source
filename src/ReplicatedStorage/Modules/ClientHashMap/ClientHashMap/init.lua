@@ -9,7 +9,6 @@
 local HashMap = {
 	EnumarationMethods = require(script.ClientCoreScripts.EnumarationUtilties),
 	WeaponManager = require(script.ClientCoreScripts.WeaponManager)
-	
 }
 
 return HashMap
