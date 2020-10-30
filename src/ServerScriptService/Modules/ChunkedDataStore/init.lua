@@ -1,14 +1,14 @@
 --- Stores very large strings into the datastore
 -- @classmod ChunkDataStore
 
-local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
+local engine = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
 
 local HttpService = game:GetService("HttpService")
 
-local ChunkUtils = require("ChunkUtils")
-local DataStorePromises = require("DataStorePromises")
-local Promise = require("Promise")
-local PromiseUtils = require("PromiseUtils")
+local ChunkUtils = require(script.Parent.ChunkUtils)
+local DataStorePromises = require(script.Parent.DataStore.DataStorePromises)
+local Promise = engine.load("Promise")
+local PromiseUtils = game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Promise")
 
 local CHUNK_SIZE = 1000 -- 260000 - 100
 
