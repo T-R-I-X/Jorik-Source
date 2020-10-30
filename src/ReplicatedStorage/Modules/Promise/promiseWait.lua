@@ -1,9 +1,7 @@
 --- Wraps the wait()/delay() API in a promise
 -- @module promiseWait
 
-local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
-
-local Promise = require("Promise")
+local Promise = require(script.Parent)
 
 return function(time)
 	return Promise.new(function(resolve, reject)

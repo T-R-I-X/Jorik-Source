@@ -16,7 +16,7 @@ function loader.load(moduleName, doClone)
 		if runService:IsClient() then
 			local requested = PATH_TO_MODULES:WaitForChild(moduleName, 15)
 
-			if not requested then error(("%s doesn't exist"):format("%s",moduleName)) end
+			if not requested then error(("%s doesn't exist"):format(moduleName)) end
 
 			return
 				doClone and require(requested:Clone())

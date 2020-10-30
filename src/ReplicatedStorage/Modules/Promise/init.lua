@@ -4,7 +4,7 @@
 
 local RunService = game:GetService("RunService")
 
-local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
+local engine = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
 
 local function isPromise(value)
 	return type(value) == "table" and value.ClassName == "Promise"
@@ -33,7 +33,7 @@ function Promise.new(func)
 		_source = ENABLE_TRACEBACK and debug.traceback() or "";
 	}, Promise)
 	
-	self._fastSpawn = require("fastSpawn");
+	self._fastSpawn = engine.load("fastSpawn");
 	
 	if type(func) == "function" then
 		func(self:_getResolveReject())

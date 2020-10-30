@@ -1,9 +1,7 @@
 --- Promises a property value
 -- @module promisePropertyValue
 
-local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
-
-local Promise = require("Promise")
+local Promise = require(script.Parent)
 
 -- NOTE: To use properly please make sure to reject the promise for proper GC if the object requiring
 -- this value is GCed.

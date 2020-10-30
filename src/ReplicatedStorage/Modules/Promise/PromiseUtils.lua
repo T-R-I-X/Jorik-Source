@@ -1,10 +1,8 @@
 --- Utility methods for promise
 -- @module PromiseUtils
 
-local require = require(game:GetService("ReplicatedStorage"):WaitForChild("Engine"))
-
 local PromiseUtils = {}
-PromiseUtils._promise = require("Promise")
+PromiseUtils._promise = require(script.Parent)
 
 --- Returns the value of the first promise resolved
 -- @constructor First

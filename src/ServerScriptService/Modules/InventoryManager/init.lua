@@ -32,7 +32,7 @@ local function GetInventory(player)
 	maid:GivePromise(
 		dataManager:GetCurrentSlot(player)
 
-		:Then(function(stringValue:string)
+		:Then(function(stringValue)
 			slotString = stringValue
 		end)
 		

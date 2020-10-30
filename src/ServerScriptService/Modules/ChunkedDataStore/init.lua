@@ -8,7 +8,7 @@ local HttpService = game:GetService("HttpService")
 local ChunkUtils = require(script.Parent.ChunkUtils)
 local DataStorePromises = require(script.Parent.DataStore.DataStorePromises)
 local Promise = engine.load("Promise")
-local PromiseUtils = game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Promise")
+local PromiseUtils = game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Promise").PromiseUtils
 
 local CHUNK_SIZE = 1000 -- 260000 - 100
 

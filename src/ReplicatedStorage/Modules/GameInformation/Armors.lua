@@ -1,6 +1,0 @@
-local module = {
-	[]={},
-	[]={}
-}
-
-return module

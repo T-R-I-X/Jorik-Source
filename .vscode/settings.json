@@ -22,7 +22,8 @@
     "Vector2",
     "TweenInfo",
     "workspace",
-    "Ray"
+    "Ray",
+    "delay"
   ],
   "Lua.runtime.version": "Lua 5.1"
 }
