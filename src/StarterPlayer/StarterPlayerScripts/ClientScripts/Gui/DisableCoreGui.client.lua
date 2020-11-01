@@ -9,7 +9,7 @@ local disableGui = {
 	Enum.CoreGuiType.Backpack;
 	Enum.CoreGuiType.EmotesMenu;
 	Enum.CoreGuiType.Health;
-	Enum.CoreGuiType.PlayerList;	
+	Enum.CoreGuiType.PlayerList;
 }
 
 --- disable the gui

@@ -21,7 +21,7 @@ local template = {
     cartelcoins=0;
 
     -- equips
-    armor = {
+    equips = {
 
     };
 
@@ -61,13 +61,13 @@ function DataManager:GetData(player)
         profile:Reconcile()
 
         profile:ListenToRelease(function()
-            Profiles[player] = nil
+            Profiles[player.UserId] = nil
 
             player:Kick()
         end)
 
         if player:IsDescendantOf(players) == true then
-            Profiles[player] = profile
+            Profiles[player.UserId] = profile
         else
             profile:Release()
         end
@@ -75,7 +75,7 @@ function DataManager:GetData(player)
         player:Kick()
     end
 
-    return Profiles[player.UserId]
+    return profile
 end
 
 function DataManager:GetKey(player,key)
@@ -103,7 +103,7 @@ end
 function DataManager:AddToKey(player,key,value)
     local keyData = DataManager:GetKey(player,key)
 
-    assert(type(keyData) == "Int64", ("Key %s is not a number"):format(key))
+    assert(type(keyData) == "number", ("Key %s is not a number"):format(key))
 
     keyData = keyData + value
 
@@ -113,9 +113,11 @@ end
 function DataManager:SubtractFromKey(player,key,value)
     local keyData = DataManager:GetKey(player,key)
 
-    assert(type(keyData) == "Int64", ("Key %s is not a number"):format(key))
+    assert(type(keyData) == "number", ("Key %s is not a number"):format(key))
 
     keyData = keyData - value
 
     return keyData
 end
+
+return DataManager

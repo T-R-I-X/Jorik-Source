@@ -4,7 +4,7 @@
 
 local RunService = game:GetService("RunService")
 
-local GameVersionUtils = {}
+local GameVersionUtils = { }
 
 function GameVersionUtils.getBuild()
 	if RunService:IsStudio() then
@@ -29,6 +29,5 @@ function GameVersionUtils.getServerType()
 		return "standard"
 	end
 end
-
 
 return GameVersionUtils

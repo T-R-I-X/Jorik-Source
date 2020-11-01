@@ -8,11 +8,6 @@ local tweenService = game:GetService("TweenService")
 local httpService = game:GetService("HttpService")
 local runService = game:GetService("RunService")
 
--- Modules
-local require = require(replicatedStorage:WaitForChild("Engine"))
-
-local maid = require("Maid").new()
-
 -- Objects
 local player = players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
@@ -31,7 +26,7 @@ local bars = {
 	["ability"] = hotBar:WaitForChild("AbilityStamina");
 }
 
-local barTween = TweenInfo.new(0.5,Enum.EasingStyle.Quad,Enum.EasingDirection.Out) 
+local barTween = TweenInfo.new(0.5,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)
 
 --- wait for data to load
 local dataValue = leaderstats:WaitForChild("slot")
@@ -46,13 +41,13 @@ local humanoid = character:WaitForChild("Humanoid")
 local function UpdateHealth()
 	local maxHealth = humanoid.MaxHealth
 	local currentHealth = humanoid.Health
-	
+
 	healthLabel.Text = currentHealth .. " / " .. maxHealth
-	
+
 	local newSize = UDim2.new(currentHealth / maxHealth,0,1,0)
-	
+
 	local tween = tweenService:Create(healthBar,barTween,{ Size = newSize })
-	
+
 	tween:Play()
 end
 
@@ -98,7 +93,7 @@ abilityValue:GetPropertyChangedSignal("Value"):Connect(UpdateStamina)
 --- data handling
 local function DecodeData()
 	local data = httpService:JSONDecode(dataValue.Value)
-	
+
 	return data
 end
 
@@ -110,9 +105,9 @@ local expBar = bars["level"]:WaitForChild("Backdrop"):WaitForChild("BarFrame")
 local function UpdateLevel(decoded)
 	local levelValue = decoded.level
 	local expValue = decoded.exp
-	
+
 	local nxpValue =	levelValue * 100
-	
+
 	levelLabel.Text = "level." .. levelValue
 	expLabel.Text = expValue .. " / " .. nxpValue
 
@@ -126,6 +121,6 @@ end
 UpdateLevel(DecodeData())
 dataValue:GetPropertyChangedSignal("Value"):Connect(function()
 	local dataDecoded = DecodeData()
-	
+
 	UpdateLevel(dataDecoded)
 end)

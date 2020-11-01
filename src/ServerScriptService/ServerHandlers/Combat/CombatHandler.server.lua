@@ -1,5 +1,5 @@
--- Author .Trix
--- Date 10/13/20
+-- Handles server damage for combat
+--@@ Author Trix
 
 -- Services
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -42,7 +42,7 @@ local function AddDamage(head,damage)
 end
 
 --- connecting damage event
-network:GetEvent("Damage").OnServerEvent:Connect(function(client,item,holdingDamage,damage)
+network:GetEvent("Damage").OnServerEvent:Connect(function(client, item, holdingDamage, damage)
 	local character = client.Character
 	local humanoid = character.Humanoid
 	local humanoidRoot = character.HumanoidRootPart
@@ -50,11 +50,12 @@ network:GetEvent("Damage").OnServerEvent:Connect(function(client,item,holdingDam
 	if not humanoid or not humanoidRoot then return end
 
 	spawn(function()
-		local hitbox = raycast:Initialize(item, {character})
+		local hitbox = raycast:Initialize(item, { character })
 		hitbox:PartMode(true)
 		hitbox:DebugMode(false)
 
 		hitbox:HitStart()
+
 		hitbox.OnHit:Connect(function(hit)
 			if not hit or not hit.Parent and hit.Parent:FindFirstChild("Humanoid") then
 				hitbox:HitStop()
@@ -95,6 +96,7 @@ network:GetEvent("Damage").OnServerEvent:Connect(function(client,item,holdingDam
 
 		wait(.5)
 		hitbox:HitStop()
+
 		network:GetEvent("PlaySound"):FireAllClients("Swing",item)
 	end)
 end)
