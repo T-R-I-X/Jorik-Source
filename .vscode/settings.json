@@ -25,5 +25,8 @@
     "Ray",
     "delay"
   ],
-  "Lua.runtime.version": "Lua 5.1"
+  "Lua.runtime.version": "Lua 5.1",
+  "Lua.diagnostics.disable": [
+    "unused-function"
+  ]
 }
