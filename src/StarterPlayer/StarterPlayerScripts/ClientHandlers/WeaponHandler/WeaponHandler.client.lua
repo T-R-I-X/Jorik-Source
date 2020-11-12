@@ -6,11 +6,11 @@
 	Script may need to be re-editted in the near future.
 ]]
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local require = require(ReplicatedStorage:WaitForChild("Engine"))
+local engine = require(ReplicatedStorage:WaitForChild("ClientEngine"))
 
-local ClientHashMap = require("ClientHashMap")
-local OrderedMetaData = require("ToolMetadata")
-local Network = require("Network")
+local ClientHashMap = engine.load("ClientHashMap")
+local OrderedMetaData = engine.load("ToolMetadata")
+local Network = engine.load("Network")
 
 local WeaponManger = ClientHashMap.WeaponManager
 local WeaponMetaData = OrderedMetaData["Glass Sword"] --What Weapon
@@ -24,15 +24,15 @@ local Mouse = Player:GetMouse()
 
 
 do --Client Input
-	
-	local Weapon = WeaponManger.New({ 
+
+	local Weapon = WeaponManger.New({
 		Player = Player,
 		Character = Character,
 		Humanoid = Humanoid,
 		AnimationsToChooseFrom = WeaponMetaData.Animations.Swings,
 		Item = Character:WaitForChild("Sword",5)
 	})
-	
+
 	local DownDebounce = false --For Mouse Down
 	local UpDebounce = false --For Mouse Up
 
@@ -40,7 +40,7 @@ do --Client Input
 	local startedDown = 0
 	local HoldDamage
 	local CurrentSwing --The current animation that is playing.
-	
+
 	local function MouseHeldTime()
 		while wait() do
 			if IsHoldingLeft then
@@ -58,10 +58,10 @@ do --Client Input
 			end
 		end
 	end
-	
+
 	local function SetCall(Block)  --An auxilary function to handle Weapon methods.
-		CurrentSwing = Weapon:StartAnimation() 
-		
+		CurrentSwing = Weapon:StartAnimation()
+
 		repeat wait(.01); until not IsHoldingLeft
 		Weapon:EndAnimation(CurrentSwing,HoldDamage,WeaponMetaData.Damage)
 	end
@@ -71,12 +71,12 @@ do --Client Input
 		if not DownDebounce then
 			DownDebounce = true
 			IsHoldingLeft = true --Since the mouse is down now.
-			
+
 			startedDown = tick()
 			coroutine.resume(coroutine.create(MouseHeldTime)) --Track how long mouse is held.
-			
+
 			SetCall()
-			
+
 			wait(.4)
 			DownDebounce = false
 		end
@@ -86,9 +86,9 @@ do --Client Input
 		if not UpDebounce then
 			UpDebounce = true
 			IsHoldingLeft = false --Since the mouse is up now.
-			
+
 			wait(.4)
-			
+
 			UpDebounce = false
 		end
 	end)
@@ -98,9 +98,9 @@ do --Client Input
 		if not DownDebounce then
 			DownDebounce = true
 			IsHoldingLeft = true --Since the mouse is down now.
-			
+
 			wait(.8)
-			
+
 			DownDebounce = false
 		end
 	end)
@@ -111,7 +111,7 @@ do --Client Input
 			IsHoldingLeft = false --Since the mouse is up now.
 
 			wait(.8)
-			
+
 			UpDebounce = false
 		end
 	end)

@@ -75,6 +75,7 @@ function DataManager:GetData(player)
         player:Kick()
     end
 
+    print(profile)
     return profile
 end
 
