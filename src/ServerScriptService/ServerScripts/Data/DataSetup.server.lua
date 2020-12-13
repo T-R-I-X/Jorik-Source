@@ -2,14 +2,20 @@
 --@@ Author Trix
 
 -- Services
-local players = game:GetService("Players")
-local serverScriptService = game:GetService("ServerScriptService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local httpService = game:GetService("HttpService")
 
 -- Modules
-local engine = require(serverScriptService:WaitForChild("ServerEngine"))
+local SystemsDirectory = require(ReplicatedStorage.Systems:WaitForChild("SystemsDirectory"))
 
-local dataManager = engine.load("DataManager")
+local knit = require(SystemsDirectory.FetchModule("SystemsCoreFramework"))
+knit.OnStart():await()
+
+local ToolMetaData = require(SystemsDirectory.FetchModule("ToolMetadata"))
+local ShieldMetaData = require(SystemsDirectory.FetchModule("ShieldMetadata"))
+
+local DataService = require(knit.ServerModules:WaitForChild("DataService"))
 
 ---------------------- Private functions ----------------------
 local function NewInstance(instanceType,instanceName,instanceParent)
@@ -22,13 +28,12 @@ end
 
 local function Load(player)
 
-	--- throwing this in a seprate thread so it doesn't stop other players from loading while it might yield
-	spawn(function()
-		local dataDecoded = dataManager:GetData(player)
+	--- throwing this in a seprate thread so it doesn't stop other Players from loading while it might yield
+	coroutine.wrap(function()
+		local DataDecoded = DataService:GetData(player)
 		local leaderstats = player:FindFirstChild("leaderstats")
-
 		assert(leaderstats ~= true, ("[DataSetup] - %s already has data loaded"):format(player.Name))
-
+		
 		--- indpendant stats
 		leaderstats = NewInstance("Folder","leaderstats",player)
 
@@ -47,27 +52,50 @@ local function Load(player)
 		--- data dependant stats
 		local dataValue = NewInstance("StringValue","Data",leaderstats)
 
-		local eqiupWeapon = dataDecoded["equips"]--["weapon"]
-		local equipArmor = dataDecoded["equips"]--["armor"]
+		local eqiupWeapon = DataDecoded["equips"].weapon--["weapon"]
+		local equipArmor = DataDecoded["equips"].armor--["armor"]
+		local equipShield = DataDecoded["equips"].shield
+		
 		local changed = false
 
-		if eqiupWeapon == nil or equipArmor == nil then
-			dataManager:SetKey(player,"equips", { ["weapon"]="Glass Sword"; ["armor"]="Cloth Armor" } )
+		if not eqiupWeapon or not equipArmor or not equipShield then
+			
+			DataService:SetKey(player,"equips", { 
+				weapon = "Glass Sword",
+				armor = "Cloth Armor", 
+				shield = "Wooden Shield" 
+			});
 
 			changed = true
 		end
 
-		if changed == true then
-			dataDecoded = dataManager:GetData(player)
+		if changed then
+			DataDecoded = DataService:GetData(player)
 		end
 
-		dataValue.Value = httpService:JSONEncode(dataDecoded)
-	end)
+		dataValue.Value = httpService:JSONEncode(DataDecoded)
+		
+		local Tool = ToolMetaData[DataDecoded.equips.weapon]
+		local shield = ShieldMetaData[DataDecoded.equips.shield]
+		
+		Tool = Tool or error("Tool %s not found"):format(DataDecoded.equips.weapon)
+		shield = shield or error("Shield %s not found"):format(DataDecoded.equips.shield)
+		
+		
+		local SwordClass = Tool.GetClass
+		local Sword = SwordClass.new(Tool)
+		
+		local shieldClass = shield.GetClass
+		local shield = shieldClass.new(shield)
+		
+		shield:Equip(player.Character:WaitForChild("UpperTorso"))
+		Sword:Equip(player.Character:WaitForChild("RightHand"))
+	end)()
 end
 
 --- connecting the PlayerAdded event to a function to load data
-for _,player in ipairs(players:GetPlayers()) do
+for _,player in ipairs(Players:GetPlayers()) do
 	Load(player)
 end
 
-players.PlayerAdded:Connect(Load)
+Players.PlayerAdded:Connect(Load)

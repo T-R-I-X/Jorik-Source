@@ -5,13 +5,19 @@
 	Typically most client scripts will require functional driven programming.
 	Script may need to be re-editted in the near future.
 ]]
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local engine = require(ReplicatedStorage:WaitForChild("ClientEngine"))
 
-local ClientHashMap = engine.load("ClientHashMap")
-local OrderedMetaData = engine.load("ToolMetadata")
-local Network = engine.load("Network")
+--modules
+local orderedEngine = require(ReplicatedStorage.Systems:WaitForChild("SystemsDirectory"))
 
+local knit = require(orderedEngine.FetchModule("SystemsCoreFramework"))
+knit.OnStart():await()
+
+local ClientHashMap = require(orderedEngine.FetchModule("ClientHashMap"))
+local OrderedMetaData = require(orderedEngine.FetchModule("ToolMetadata"))
+
+local Network = require(knit.ClientModules.NetworkController)
 local WeaponManger = ClientHashMap.WeaponManager
 local WeaponMetaData = OrderedMetaData["Glass Sword"] --What Weapon
 
@@ -47,13 +53,12 @@ do --Client Input
 				HoldDamage = tick() - startedDown --Additional Damage
 
 				if tick() - startedDown >= 3 then
-					print(HoldDamage)
 					break
 				end
 			else
 				--Client stopped holding mouse
 				HoldDamage = tick() - startedDown
-				print(HoldDamage)
+				
 				break
 			end
 		end
@@ -62,7 +67,7 @@ do --Client Input
 	local function SetCall(Block)  --An auxilary function to handle Weapon methods.
 		CurrentSwing = Weapon:StartAnimation()
 
-		repeat wait(.01); until not IsHoldingLeft
+		repeat wait(.00001); until not IsHoldingLeft
 		Weapon:EndAnimation(CurrentSwing,HoldDamage,WeaponMetaData.Damage)
 	end
 
@@ -73,7 +78,7 @@ do --Client Input
 			IsHoldingLeft = true --Since the mouse is down now.
 
 			startedDown = tick()
-			coroutine.resume(coroutine.create(MouseHeldTime)) --Track how long mouse is held.
+			coroutine.wrap(MouseHeldTime)() --Track how long mouse is held.
 
 			SetCall()
 
